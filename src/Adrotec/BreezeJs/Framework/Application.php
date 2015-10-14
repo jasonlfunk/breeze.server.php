@@ -1,4 +1,4 @@
-<?php
+/<?php
 
 namespace Adrotec\BreezeJs\Framework;
 
@@ -181,7 +181,8 @@ class Application implements ApplicationInterface
             $context = $this->getSerializationContext($request);
         }
         $response = new Response();
-        $response->setContent($this->serializer->serialize($result, 'json', $context));
+        $json_result = $this->serializer->serialize($result, 'json', $context);
+        $response->setContent(json_encode(json_decode($json_result, true)));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
