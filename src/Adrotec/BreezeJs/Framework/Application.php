@@ -1,4 +1,4 @@
-/<?php
+<?php
 
 namespace Adrotec\BreezeJs\Framework;
 

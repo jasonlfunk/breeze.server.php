@@ -42,9 +42,13 @@ class SaveContextProvider {
         return false;
     }
 
+    function snakeToCamel($val) {
+        return str_replace(' ', '', ucwords(str_replace('_', ' ', $val)));
+    }
+
     function setObjectValue($object, $property, $value, $setter = false) {
         if (!$setter) {
-            $setter = 'set' . ucfirst($property);
+            $setter = 'set' . $this->snakeToCamel($property);
         }
         if (method_exists($object, $setter)) {
             $object->$setter($value);
@@ -221,8 +225,8 @@ class SaveContextProvider {
             $idPropertyRefl = $meta->getReflectionProperty($idProperty);
 
             $idPropertyName = $idProperty;
-            $idGetter = ('get' . ucfirst($idPropertyName));
-            $idSetter = ('set' . ucfirst($idPropertyName));
+            $idGetter = ('get' . $this->snakeToCamel($idPropertyName));
+            $idSetter = ('set' . $this->snakeToCamel($idPropertyName));
             $idValue = $entityArr->$idProperty;
 
             if ($entityAspect->entityState == 'Added') {
@@ -230,8 +234,10 @@ class SaveContextProvider {
                 $entity = new $className();
             } else if (isset($entityArr->$idProperty)) {
                 $entity = $repository->find($entityArr->$idProperty);
+                if (is_null($entity)) {
+                    continue;
+                }
             }
-
             $associations = array();
 
             if ($entityAspect->entityState == 'Modified' || $entityAspect->entityState == 'Added') {
@@ -256,7 +262,7 @@ class SaveContextProvider {
                         $fkFieldName = $associationFieldMapping['fieldName'] . 'Id';
                     }
                     if (property_exists($entityArr, $fkFieldName)) {
-                        $associationSetter = false; //('set' . ucfirst($associationFieldMapping['fieldName']));
+                        $associationSetter = false; //('set' . $this->snakeToCamel($associationFieldMapping['fieldName']));
 
                         $associations[$fkFieldName] = array(
                             'targetEntity' => $associationFieldMapping['targetEntity'],
@@ -281,7 +287,7 @@ class SaveContextProvider {
                     if ($propertyType === self::PROPERTY_TYPE_NONE) {
                         continue;
                     }
-                    $setter = false; //('set' . ucfirst($propertyName));
+                    $setter = false; //('set' . $this->snakeToCamel($propertyName));
                     $propertyValue = $entityArr->$propertyName;
                     $this->setObjectValue($entity, $propertyName, $propertyValue, $setter);
                 }

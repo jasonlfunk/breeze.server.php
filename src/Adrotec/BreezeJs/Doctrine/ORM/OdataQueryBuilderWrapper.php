@@ -81,11 +81,25 @@ class OdataQueryBuilderWrapper {
         throw new OdataQueryException($message);
     }
 
-    public function getPropertyType($properyName, ClassMetadata $meta = null) {
+    public function getPropertyType(&$properyName, ClassMetadata $meta = null) {
         if ($meta === null) {
             $meta = $this->getClassMetadata();
         }
+
+        if (isset($meta->associationMappings[$properyName])) {
+            return self::PROPERTY_NAVIGATION;
+        }
+        if (isset($meta->fieldMappings[$properyName])) {
+            return self::PROPERTY_DATA;
+        }
+
         if (strpos($properyName, '/')) {
+            $test_dots = str_replace('/', '.', $properyName);
+            if (isset($meta->fieldMappings[$test_dots])) {
+                $properyName = $test_dots;
+                return self::PROPERTY_DATA;
+            }
+
             $associations = explode('/', $properyName);
             foreach ($associations as $properyName) {
                 $type = $this->getPropertyType($properyName, $meta);
@@ -100,12 +114,7 @@ class OdataQueryBuilderWrapper {
             }
             return self::PROPERTY_NAVIGATION;
         }
-        if (isset($meta->associationMappings[$properyName])) {
-            return self::PROPERTY_NAVIGATION;
-        }
-        if (isset($meta->fieldMappings[$properyName])) {
-            return self::PROPERTY_DATA;
-        }
+        
         return false;
     }
 

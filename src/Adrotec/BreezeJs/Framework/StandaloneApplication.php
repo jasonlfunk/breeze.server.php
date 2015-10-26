@@ -116,16 +116,18 @@ class StandaloneApplication extends Application implements StandaloneApplication
     {
         $response = parent::handle($request);
         if ($this->corsEnabled) {
-            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $referer = rtrim($request->headers->get("referer"), '/');
+            $response->headers->set('Access-Control-Allow-Origin', $referer);
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
             $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
             $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Accept, X-Requested-With');
         }
         return $response;
     }
 
-    public function build()
+    public function build($em = null)
     {
-        $this->setObjectManager($this->createEntityManager());
+        $this->setObjectManager($em ?: $this->createEntityManager());
 
         $this->serializerBuilder = BreezeSerializerBuilder::create($this->getObjectManager());
 

@@ -6,7 +6,7 @@ use Adrotec\BreezeJs\Metadata\StructuralType;
 use Adrotec\BreezeJs\Metadata\Property;
 use Adrotec\BreezeJs\Metadata\DataProperty;
 use Adrotec\BreezeJs\Metadata\NavigationProperty;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Adrotec\BreezeJs\Validator\ValidatorConstraintConverter as Converter;
 
 use Adrotec\BreezeJs\Metadata\Validator as MetaValidator;
@@ -14,16 +14,14 @@ use Adrotec\BreezeJs\Metadata\Validator as MetaValidator;
 class ValidatorInterceptor {
 
     private $validator;
-    private $validatorMetadataFactory;
 
     public function __construct(ValidatorInterface $validator) {
         $this->validator = $validator;
-        $this->validatorMetadataFactory = $validator->getMetadataFactory();
     }
 
     public function modifyStructuralType(StructuralType &$structuralType) {
         
-        $validatorMetadata = $this->validatorMetadataFactory->getMetadataFor($structuralType->reflectionClass->getName());
+        $validatorMetadata = $this->validator->getMetadataFor($structuralType->reflectionClass->getName());
 
         if(!$validatorMetadata){
             return;
