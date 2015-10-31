@@ -82,7 +82,7 @@ class SaveContextProvider {
         if(is_array($string)){
             $output = array();
             foreach ($string as $value) {
-                $output[] = $this->convertToDoctrineValue($value, $dataType);
+                $output[] = $this->convertToDoctrineValue($value, 'string'); //bad assumption... string
             }
             return $output;
         }
