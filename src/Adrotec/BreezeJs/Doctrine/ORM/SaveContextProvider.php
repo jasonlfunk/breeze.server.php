@@ -357,7 +357,7 @@ class SaveContextProvider {
 
             }
             
-            foreach ($entitiesModified as $key => $entityModified){
+            foreach ($entitiesModified as $key => &$entityModified){
                 if ($entityModified['state'] == 'Added' || $entityModified['state'] == 'Modified') {
                     $errors = $this->validateEntity($entityModified['entity']);
                     if ($errors && count($errors) > 0) {
