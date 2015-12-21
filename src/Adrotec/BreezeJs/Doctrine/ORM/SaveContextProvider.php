@@ -357,7 +357,7 @@ class SaveContextProvider {
 
             }
             
-            foreach ($entitiesModified as $key => &$entityModified){
+            foreach ($entitiesModified as $key => $entityModified){
                 if ($entityModified['state'] == 'Added' || $entityModified['state'] == 'Modified') {
                     $errors = $this->validateEntity($entityModified['entity']);
                     if ($errors && count($errors) > 0) {
@@ -369,14 +369,14 @@ class SaveContextProvider {
                     }
                     if ($entityModified['entity']) {
                         $this->entityManager->persist($entityModified['entity']);
-                        $entityModified['persisted'] = true;
+                        $entitiesModified[$key]['persisted'] = true;
                     }
                 } else if ($entityModified['state'] == 'Deleted') {
                     if ($entityModified['entity']) {
                         $entityCopy = clone $entityModified['entity'];
-                        $this->entityManager->remove($entityModified['entity']);
-                        $entityModified['entity'] = $entityCopy;
-                        $entityModified['deleted'] = true;
+                        $this->entityMemove($entityModified['entity']);
+                        $entitiesModified[$key]['entity'] = $entityCopy;
+                        $entitiesModified[$key]['deleted'] = true;
                     }
                 }
             }
