@@ -374,7 +374,7 @@ class SaveContextProvider {
                 } else if ($entityModified['state'] == 'Deleted') {
                     if ($entityModified['entity']) {
                         $entityCopy = clone $entityModified['entity'];
-                        $this->entityMemove($entityModified['entity']);
+                        $this->entityRemove($entityModified['entity']);
                         $entitiesModified[$key]['entity'] = $entityCopy;
                         $entitiesModified[$key]['deleted'] = true;
                     }
