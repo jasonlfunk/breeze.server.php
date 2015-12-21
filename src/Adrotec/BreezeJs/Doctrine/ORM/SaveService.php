@@ -30,6 +30,24 @@ class SaveService {
     
     public function createSaveBundleFromString($saveBundleString){
         $saveBundleArr = json_decode($saveBundleString);
+	usort($saveBundleArr->entities, function ($a, $b) {
+            if ($a->entityAspect->entityState == 'Added') {
+                $a = strtotime($a->createdAt);
+            } else {
+                $a = strtotime($a->updatedAt);
+            }
+
+            if ($b->entityAspect->entityState == 'Added') {
+                $b = strtotime($b->createdAt);
+            } else {
+                $b = strtotime($b->updatedAt);
+            }
+            
+            if ($a == $b) {
+                return 0;
+            }
+            return ($a < $b) ? -1 : 1;
+        });
         $saveBundle = new SaveBundle();
         $saveBundle->setEntities($saveBundleArr->entities);
         return $saveBundle;
